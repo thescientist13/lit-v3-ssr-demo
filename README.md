@@ -2,6 +2,11 @@
 
 A repo for running Lit+SSR demos using v3.
 
+## Setup
+
+1. Clone the repo
+1. Run `npm ci`
+
 ## Demos
 
 ### Greeting ✅
