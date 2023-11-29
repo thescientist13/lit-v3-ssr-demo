@@ -1,0 +1,25 @@
+{
+  "name": "lit-v3-ssr-demo",
+  "version": "1.0.0",
+  "description": "A repo for running Lit+SSR demos using v3",
+  "author": "Owen Buckley <owen@thegreenhouse.io>",
+  "license": "ISC",
+  "homepage": "https://github.com/thescientist13/lit-v3-ssr-demo#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thescientist13/lit-v3-ssr-demo.git"
+  },
+  "keywords": [
+    "Lit",
+    "SSR"
+  ],
+  "type": "module",
+  "scripts": {
+    "demo:greeting": "node ./greeting.js",
+    "demo:document": "node ./document.js"
+  },
+  "dependencies": {
+    "@lit-labs/ssr": "^3.2.0",
+    "lit": "^3.1.0"
+  }
+}
