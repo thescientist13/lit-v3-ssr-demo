@@ -55,7 +55,7 @@ The code is in _document.js_ and you can run it with `npm run demo:document`, th
   </pre>
 </details>
 
-edit: Looks like its the `lang=${...}` bit.  If I remove it, it works fine.  I guess the question is if its intentional that it should work or not in this case, since the docs do indicate [attribute are not allowed](https://lit.dev/docs/templates/expressions/#invalid-locations).
+edit: Looks like its the `lang=${...}` bit.  If I remove it, it works fine.  I guess the question is if its intentional that it should work or not in this case, since the docs do indicate [attribute are not allowed](https://lit.dev/docs/templates/expressions/#invalid-locations).  Opened [an issue](https://github.com/lit/lit/issues/4417) with the Lit team.
 ```sh
 {
   ssrContent: '\n' +
