@@ -16,7 +16,9 @@
   "type": "module",
   "scripts": {
     "demo:greeting": "node ./greeting.js",
-    "demo:document": "node ./document.js"
+    "demo:async": "node ./async.js",
+    "demo:so-templates": "node ./document.js",
+    "demo:so-components": "node ./component.js"
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.2.0",
