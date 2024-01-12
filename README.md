@@ -10,9 +10,9 @@ A repo for running Lit+SSR demos using v3.
 ## Demos
 
 - `npm run demo:greeting`
-- `npm run demo:document` (server only templates)
 - `npm run demo:async`
-- `npm run demo:component` (server only components)
+- `npm run demo:document` (server only templates example)
+- `npm run demo:page` (server only "components" example, e.g. no DSD - experimental)
 
 ### Greeting ✅
 
@@ -48,7 +48,7 @@ The code is in _greeting.js_ and you can run it with `npm run demo:greeting`.  T
 }
 ```
 
-### [Server Only Templates](https://www.npmjs.com/package/@lit-labs/ssr#server-only-templates) ⚠️
+### [Server Only Templates](https://www.npmjs.com/package/@lit-labs/ssr#server-only-templates) ✅
 
 This is the "document" example taken from this [GitHub issue](https://github.com/lit/lit/issues/2441#issuecomment-1816903951) and following [this section of the docs](https://lit.dev/docs/ssr/server-usage/#collectresult()), primarily to demonstrate rendering a full HTML document on the server.
 ```js
@@ -162,6 +162,8 @@ But the contents just come out empty.
 
 ---
 
+> _**edit: from a call with the Lit team, they were not familiar with that `async` demo referenced and confirmed it would only have worked with hacks involved, so only current option would be to build the linked PR above from source.**_
+
 There is also [this demo](https://github.com/PonomareVlad/lit-ssr-vercel) referenced in the linked issue, but I couldn't get it working; `greetingLoader.then` worked, but the template contents were empty.  Not sure if that's because that demo is using Lit `2.x`_?
 
 
@@ -192,30 +194,49 @@ class SimpleGreeting extends LitElement {
 customElements.define('simple-greeting', SimpleGreeting);
 ```
 
-### Server Only Components ❓
+### Server Only Components / No DSD❓
 
-Similar to Server Only Templates, it would be nice if we could do something like this, and "unwrap" the Declarative Shadow DOM somehow?
+Similar in spirit to Server Only Templates, this "page" example demonstrates what it would be like if we could use the `LitElement` component model but "unwrap" the Declarative Shadow DOM / SSR somehow and just get straight HTML, no shadow dom.  The motivation is to be able to support [Greenwood's custom element as pages feature](https://www.greenwoodjs.io/blog/release/v0-26-0/#custom-elements-as-pages).
+
+> _Though as pointed out in a call with the Lit team, that's kind of already what server only templates do I suppose, but combined with `async` support in components / SSR, this what a dynamic page server rendered could look like in a file-based routing context._
 
 ```js
+// pages/products.js
 import { LitElement } from 'lit';
 import { html } from '@lit-labs/ssr';
-import './simple-greeting.js';
+import './card.js';
 
-export default class GreetingPage extends LitElement {
-
+export default class ProductsPage extends LitElement {
   constructor() {
     super();
-    this.greeting = 'World';
+    this.products = [];
+  }
+
+  // assuming we get some sort of async support
+  async connectedCallback() {
+    this.products = await fetch('http://example.com/api/products').then(resp => resp.json());
   }
 
   render() {
-    const { greeting } = this;
+    const { products } = this;
 
-    return html`<simple-greeting name=${greeting}></simple-greeting>`;
+    return html`
+      ${
+        products.map((product, idx) => {
+          const { title, thumbnail } = product;
+          return html`
+            <app-card
+              title="${idx + 1}) ${title}"
+              thumbnail="${thumbnail}"
+            ></app-card>
+          `;
+        })
+      }
+    `;
   }
 }
 
-customElements.define('greeting-page', GreetingPage);
+customElements.define('products-page', GreetingPage);
 ```
 
 As it stands, currently a couple things are a bit of an issue, based on the current output
@@ -227,4 +248,4 @@ As it stands, currently a couple things are a bit of an issue, based on the curr
 ```
 
 1. [ ] We're stuck with a wrapping `<template>`, which is part of Lit, as they are [DSD only](https://github.com/lit/lit/issues/3080).
-1. [ ] Still getting hydration markers (`<!--lit-part-->`) but I suppose this would be fine with or without hydration?  Maybe the Server Only Templates based `html` function would help here?
+1. [ ] Still getting hydration markers (`<!--lit-part-->`) but I suppose this would be fine with or without hydration?  Even when using the Server Only Templates based `html` function.

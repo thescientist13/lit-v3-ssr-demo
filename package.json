@@ -17,11 +17,11 @@
   "scripts": {
     "demo:greeting": "node ./greeting.js",
     "demo:async": "node ./async.js",
-    "demo:so-templates": "node ./document.js",
-    "demo:so-components": "node ./component.js"
+    "demo:document": "node ./document.js",
+    "demo:page": "node ./page.js"
   },
   "dependencies": {
-    "@lit-labs/ssr": "^3.2.0",
-    "lit": "^3.1.0"
+    "@lit-labs/ssr": "^3.2.1",
+    "lit": "^3.1.1"
   }
 }
