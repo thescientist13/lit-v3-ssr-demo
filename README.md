@@ -212,6 +212,11 @@ export default class ProductsPage extends LitElement {
     this.products = [];
   }
 
+  // assuming this worked to escape from the Shadow DOM
+  createRenderRoot() {
+    return this;
+  }
+
   // assuming we get some sort of async support
   async connectedCallback() {
     this.products = await fetch('http://example.com/api/products').then(resp => resp.json());
@@ -247,5 +252,5 @@ As it stands, currently a couple things are a bit of an issue, based on the curr
 }
 ```
 
-1. [ ] We're stuck with a wrapping `<template>`, which is part of Lit, as they are [DSD only](https://github.com/lit/lit/issues/3080).
+1. [ ] We're stuck with a wrapping `<template>`, which is part of Lit, as they are [DSD only](https://github.com/lit/lit/issues/3080).  So will have to hack around that in the meantime to extract the Light DOM only content?
 1. [ ] Still getting hydration markers (`<!--lit-part-->`) but I suppose this would be fine with or without hydration?  Even when using the Server Only Templates based `html` function.
