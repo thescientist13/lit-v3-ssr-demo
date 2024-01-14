@@ -7,6 +7,8 @@ export default {
     entryFileNames: '[name].dist.js'
   },
   plugins: [
-    nodeResolve()
+    nodeResolve({
+      exportConditions: ['default', 'module', 'import', 'node']
+    })
   ]
 }
