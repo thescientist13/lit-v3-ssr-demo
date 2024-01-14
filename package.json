@@ -15,13 +15,21 @@
   ],
   "type": "module",
   "scripts": {
+    "clean": "rimraf ./build",
     "demo:greeting": "node ./greeting.js",
     "demo:async": "node ./async.js",
     "demo:document": "node ./document.js",
-    "demo:page": "node ./page.js"
+    "demo:page": "node ./page.js",
+    "demo:bundle": "npm run clean && rollup -c rollup.config.js && node ./build/handler.dist.js",
+    "demo:no-bundle": "node ./handler.js"
   },
   "dependencies": {
     "@lit-labs/ssr": "^3.2.1",
     "lit": "^3.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.9.5"
   }
 }

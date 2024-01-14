@@ -13,6 +13,8 @@ A repo for running Lit+SSR demos using v3.
 - `npm run demo:async`
 - `npm run demo:document` (server only templates example)
 - `npm run demo:page` (server only "components" example, e.g. no DSD - experimental)
+- `npm run demo:bundle` (renders an `HTMLElement is not defined` error when bundled with Rollup)
+- `npm run demo:no-bundle` (same as above but running the code pre-bundled, which does not emit the error)
 
 ### Greeting ✅
 
@@ -254,3 +256,65 @@ As it stands, currently a couple things are a bit of an issue, based on the curr
 
 1. [ ] We're stuck with a wrapping `<template>`, which is part of Lit, as they are [DSD only](https://github.com/lit/lit/issues/3080).  So will have to hack around that in the meantime to extract the Light DOM only content?
 1. [ ] Still getting hydration markers (`<!--lit-part-->`) but I suppose this would be fine with or without hydration?  Even when using the Server Only Templates based `html` function.
+
+## Bundling ❌
+
+This demo is for testing the ability to entirely bundle Lit's SSR capabilities, like if bundling and deploying to a server or Lambda environment.  Currently using Rollup for this and a basic test in _handler.js_.
+
+```js
+import { render } from '@lit-labs/ssr';
+import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
+import { html } from 'lit';
+import './components/simple-greeting.js';
+
+const template = (name) => html`
+  <simple-greeting .name="${name}"></simple-greeting>
+`;
+
+export async function handler(data) {
+  const { name } = data;
+  const ssrResult = render(template(name));
+  const contents = await collectResult(ssrResult);
+
+  console.log({ contents });
+
+  return new Response(contents, { 
+    headers: new Headers({
+      'Content-Type': 'text/html'
+    })
+  });
+}
+
+(async () => {
+  await handler({ 'name': 'handler' });
+})();
+```
+
+But getting an error that `HTMLElement is undefined` from the bundled output.
+
+```sh
+➜  lit-v3-ssr-demo git:(master) ✗ npm run demo:bundle   
+
+# ...
+
+ReferenceError: HTMLElement is not defined
+    at file:///Users/owenbuckley/Workspace/github/lit-v3-ssr-demo/build/handler.dist.js:206:752
+    at ModuleJob.run (node:internal/modules/esm/module_job:193:25)
+    at async Promise.all (index 0)
+    at async ESMLoader.import (node:internal/modules/esm/loader:530:24)
+    at async loadESM (node:internal/process/esm_loader:91:5)
+    at async handleMainPromise (node:internal/modules/run_main:65:12)
+```
+
+Interestingly, just running the unbundled version things work fine
+```sh
+➜  lit-v3-ssr-demo git:(master) ✗ npm run demo:no-bundle
+
+# ...
+
+{
+  contents: '<!--lit-part My2136iVtRs=-->\n' +
+    '  <!--lit-node 0--><simple-greeting ><template shadowroot="open" shadowrootmode="open"><style>p { color: blue }</style><!--lit-part EvGichL14uw=--><p>Hello, <!--lit-part-->handler<!--/lit-part-->!</p><!--/lit-part--></template></simple-greeting>\n' +
+    '<!--/lit-part-->'
+}
+```
