@@ -290,7 +290,7 @@ export async function handler(data) {
 ```
 <details>
   <blockquote>
-    <u><i>This was actually resolved by extending Rollup config to support node as an exportCondition</u></i>
+    <u><i>This was actually resolved by extending rollup.config.js nodeResolve plugin to support <b>"node"</b> as an <a href="https://github.com/thescientist13/lit-v3-ssr-demo/blob/master/rollup.config.js#L11">exportCondition</a></u></i>
   </blockquote>
 
   Getting an error that `HTMLElement is undefined` from the bundled output.
